@@ -8,7 +8,23 @@ class UserComponent extends React.Component {
         this.state = {
             users:[]
         }
-    
+        this.addUser = this.addUser.bind(this);
+        this.editUser = this.editUser.bind(this);
+        this.deleteUser = this.deleteUser.bind(this);
+    }
+
+    deleteUser(id){
+        UserService.deleteUser(id).then( res => {
+            this.setState({users: this.state.users.filter(user => user.Id !== id)});
+        });
+    }
+
+    viewUser(id){
+        this.props.history.push(`/view-user/${id}`);
+    }
+
+    editUser(id){
+        this.props.history.push(`/add-user/${id}`);
     }
 
     // provides list of users
@@ -18,29 +34,43 @@ class UserComponent extends React.Component {
         });
     }
 
+    addUser(){
+        this.props.history.push('/add-user/_add');
+    }
+
     // returns jsx
     render(){
         return (
             <div>
-                <h1 className = "text-center">Users List</h1>
+                <h1 className = "text-center">User List</h1>
+                <div className = "row">
+                    <button className="ntm ntm-primary" onClick={this.addUser}>Add User</button>
+                </div>
+                <br></br>
                 <table className = "table table-striped">
                     <thead>
                         <tr>
-                            <td>User ID</td>
-                            <td>User First Name</td>
-                            <td>User Last Name</td>
-                            <td>User Email</td>
+                            <th>User ID</th>
+                            <th>User First Name</th>
+                            <th>User Last Name</th>
+                            <th>User Email</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {
                             this.state.users.map(
                                 user =>
-                                <tr key = {user.id}>
-                                    <td>{user.id}</td>
+                                <tr key = {user.Id}>
+                                    <td>{user.Id}</td>
                                     <td>{user.firstName}</td>
                                     <td>{user.lastName}</td>
                                     <td>{user.email}</td>
+                                    <td>
+                                        <button onClick={ () => this.editUser(user.id)} className="btn btn-info">Update</button>
+                                        <button style={{marginLeft: "10px"}} onClick={ () => this.deleteUser(user.id)} className="btn btn-danger">Delete</button>
+                                        <button style={{marginLeft: "10px"}} onClick={ () => this.viewUser(user.id)} className="btn btn-info">View</button>
+                                    </td>
                                 </tr>
                             )
                         }
